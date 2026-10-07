@@ -1,0 +1,310 @@
+/* style.css - Styling Modern SaaS Dashboard Analisis Popularitas Database Relasional */
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* Base Body Styles */
+body {
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" on, "zero" on;
+}
+
+/* TEMA GELAP (DEFAULT UTAMA) */
+html.dark body {
+  background-color: #070A13;
+  color: #F8FAFC;
+}
+
+html.dark .glass-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .glass-card:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6);
+}
+
+html.dark .glass-nav {
+  background: rgba(7, 10, 19, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+}
+
+html.dark .bg-mesh-dark {
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
+    radial-gradient(at 85% 10%, rgba(6, 182, 212, 0.14) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(168, 85, 247, 0.1) 0px, transparent 55%),
+    radial-gradient(at 80% 85%, rgba(244, 63, 94, 0.12) 0px, transparent 50%),
+    radial-gradient(at 10% 85%, rgba(16, 185, 129, 0.12) 0px, transparent 50%);
+}
+
+html.dark .bg-grid-pattern {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+/* TEMA TERANG (CLEAN LIGHT MODE) */
+html.light body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+html.light .glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 1);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+html.light .glass-card:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.12);
+}
+
+html.light .glass-nav {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(226, 232, 240, 1);
+}
+
+html.light .text-white,
+html.light h1, html.light h2, html.light h3, html.light h4 {
+  color: #0F172A !important;
+}
+
+html.light .text-slate-100 {
+  color: #1E293B !important;
+}
+
+html.light .text-slate-200 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-300 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-400 {
+  color: #64748B !important;
+}
+
+html.light .bg-slate-900,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/40 {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/40 {
+  background-color: #E2E8F0 !important;
+  border-color: #CBD5E1 !important;
+}
+
+html.light .bg-slate-950,
+html.light footer {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/50,
+html.light .border-slate-700,
+html.light .border-slate-700\/80,
+html.light .border-slate-700\/50 {
+  border-color: #E2E8F0 !important;
+}
+
+html.light .bg-mesh-dark {
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.09) 0px, transparent 50%),
+    radial-gradient(at 85% 10%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(168, 85, 247, 0.06) 0px, transparent 55%),
+    radial-gradient(at 80% 85%, rgba(244, 63, 94, 0.06) 0px, transparent 50%),
+    radial-gradient(at 10% 85%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
+}
+
+html.light .bg-grid-pattern {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+
+/* Card Hover Lift */
+.hover-lift {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+}
+
+/* Gradient Text */
+.gradient-text-primary {
+  background: linear-gradient(135deg, #A5B4FC 0%, #6366F1 50%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html.light .gradient-text-primary {
+  background: linear-gradient(135deg, #4338CA 0%, #4F46E5 50%, #0284C7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+html.light ::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+/* Cross-Highlighting State */
+.db-highlighted {
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 2px var(--highlight-color, #6366F1), 0 8px 25px rgba(99, 102, 241, 0.35) !important;
+  opacity: 1 !important;
+  transform: scale(1.02);
+}
+
+.db-dimmed {
+  opacity: 0.3 !important;
+  filter: grayscale(0.7);
+}
+
+/* Custom Heatmap styling */
+.heatmap-cell {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 8px;
+}
+.heatmap-cell:hover {
+  transform: scale(1.08);
+  z-index: 10;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+
+/* Sortable Table Styles */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+th.sortable:hover {
+  color: #818CF8;
+}
+th.sortable::after {
+  content: ' ↕';
+  font-size: 0.75rem;
+  opacity: 0.4;
+}
+th.sort-asc::after {
+  content: ' ▲';
+  opacity: 1;
+  color: #6366F1;
+}
+th.sort-desc::after {
+  content: ' ▼';
+  opacity: 1;
+  color: #6366F1;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* PRINT MEDIA STYLES - Bersih dan Rapi */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 10pt;
+  }
+  
+  .no-print, 
+  nav, 
+  #btnBackToTop, 
+  .chart-btn-action,
+  #themeToggle, 
+  #segmentSelector,
+  #yearFilterSelect,
+  #highlightBanner {
+    display: none !important;
+  }
+
+  .glass-card {
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400 {
+    color: #0F172A !important;
+  }
+
+  .gradient-text-primary {
+    -webkit-text-fill-color: #1E293B !important;
+    color: #1E293B !important;
+  }
+
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #0F172A;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+.print-header {
+  display: none;
+}

@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard statistik deskriptif analisis komparatif popularitas database relasional 2023-2025 berbasis Stack Overflow Developer Survey untuk presentasi tugas Statistika.">
+  <meta name="author" content="Tim Tugas Statistika Deskriptif">
+  <title>Analisis Popularitas Database Relasional 2023–2025 | Dashboard Statistika</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN dengan konfigurasi kustom -->
+  <script>
+    tailwind = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+            },
+            slate: {
+              850: '#111827',
+              900: '#0F172A',
+              950: '#090D16',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js v4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- CSS Kustom -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white transition-colors duration-300">
+
+  <!-- Header Khusus Print -->
+  <div class="print-header">
+    <h1 class="text-2xl font-bold">Laporan Analisis Statistik Popularitas Database Relasional 2023–2025</h1>
+    <p class="text-sm text-slate-600">Sumber: Stack Overflow Developer Survey (Segmen Pekerja & Pelajar) &bull; Tugas Statistika</p>
+  </div>
+
+  <!-- STICKY TOP NAVIGATION -->
+  <nav class="sticky top-0 z-50 glass-nav transition-all duration-300 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+             <!-- Logo & Judul Dashboard -->
+        <div class="flex items-center gap-2.5 flex-shrink-0">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7M4 7c0-2 1.5-3 3.5-3h9c2 0 3.5-1 3.5-3M4 7c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3m-16 5c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xs sm:text-sm md:text-base tracking-tight text-white whitespace-nowrap">BartriDB Stats</span>
+              <span class="hidden md:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 whitespace-nowrap">2023–2025</span>
+            </div>
+            <p class="text-[10px] text-slate-400 hidden lg:block leading-tight"></p>
+          </div>
+        </div>
+
+        <!-- Menu Navigasi Anchor Links (Desktop) -->
+        <div class="hidden xl:flex items-center gap-5 text-xs font-semibold text-slate-300">
+          <a href="#sectionKPI" class="hover:text-indigo-400 transition-colors">Ringkasan</a>
+          <a href="#sectionTren" class="hover:text-indigo-400 transition-colors">Tren</a>
+          <a href="#sectionPerbandingan" class="hover:text-indigo-400 transition-colors">Perbandingan</a>
+          <a href="#sectionPangsa" class="hover:text-indigo-400 transition-colors">Pangsa</a>
+          <a href="#sectionPeringkat" class="hover:text-indigo-400 transition-colors">Peringkat</a>
+          <a href="#sectionPerbandinganSegmen" class="hover:text-indigo-400 transition-colors">Pekerja vs Pelajar</a>
+          <a href="#sectionHeatmap" class="hover:text-indigo-400 transition-colors">Heatmap</a>
+          <a href="#sectionStatistik" class="hover:text-indigo-400 transition-colors font-bold text-indigo-400">Tabel Statistik</a>
+        </div>
+
+        <!-- Global Interactive Controls (Segmen, Tahun, Tema, PDF) -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          
+          <!-- Toggle Segmen -->
+          <div class="flex items-center bg-slate-900/90 p-0.5 sm:p-1 rounded-2xl border border-slate-800 shadow-inner flex-shrink-0" id="segmentSelector">
+            <button data-segment-btn="Pekerja" class="px-2.5 sm:px-4 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition-all">
+              Pekerja
+            </button>
+            <button data-segment-btn="Pelajar" class="px-2.5 sm:px-4 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-transparent text-slate-400 hover:text-white transition-all">
+              Pelajar
+            </button>
+            <button data-segment-btn="Bandingkan" class="px-2 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-transparent text-slate-400 hover:text-white transition-all">
+              Bandingkan
+            </button>
+          </div>
+
+          <!-- Filter Tahun Terpilih -->
+          <div class="relative hidden sm:block">
+            <select id="yearFilterSelect" class="bg-slate-900 border border-slate-700/80 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-medium cursor-pointer">
+              <option value="2">Tahun 2025</option>
+              <option value="1">Tahun 2024</option>
+              <option value="0">Tahun 2023</option>
+            </select>
+          </div>
+
+          <!-- Tombol Cetak / PDF -->
+          <button id="btnPrintReport" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-white hover:bg-slate-700 transition-all" title="Cetak / Simpan sebagai PDF">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+          </button>
+
+          <!-- Toggle Tema Gelap / Terang -->
+          <button id="themeToggle" class="p-2 rounded-xl bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-white hover:bg-slate-700 transition-all" title="Ubah Tema">
+            <svg id="iconSun" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <svg id="iconMoon" class="w-4 h-4 text-indigo-300 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BANNER NOTIFIKASI SOROTAN DATABASE (CROSS-HIGHLIGHT) -->
+  <div id="highlightBanner" class="hidden bg-indigo-900/60 border-b border-indigo-700/60 py-2 px-4 no-print transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full" id="highlightDbDot"></span>
+        <span class="text-indigo-200">Menyorot Database:</span>
+        <span class="font-bold text-white text-sm" id="highlightDbName">-</span>
+        <span class="text-indigo-300 hidden sm:inline">&bull; Seluruh chart dan tabel difokuskan pada database ini.</span>
+      </div>
+      <button id="btnResetHighlight" class="px-2.5 py-1 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white font-semibold flex items-center gap-1 transition-all">
+        <span>Hapus Sorotan</span>
+        <span class="text-xs">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 bg-mesh-dark bg-grid-pattern">
+
+    <!-- 1. HERO SECTION -->
+    <header class="relative pt-6 pb-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 border-b border-slate-800/80">
+      <div class="max-w-3xl space-y-4">
+        
+        <!-- Badges Kategori -->
+        <div class="inline-flex flex-wrap items-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+            Data 2023–2025
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700">
+            6 Database Relasional
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-800/80 text-slate-300 border border-slate-700">
+            Segmen Pekerja & Pelajar
+          </span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+            Stack Overflow Survey
+          </span>
+        </div>
+
+        <!-- Heading Utama Bergradien -->
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+          Analisis Popularitas <br class="hidden sm:inline">
+          <span class="gradient-text-primary">Database Relasional 2023–2025</span>
+        </h1>
+        <h1 class="text-1xl sm:text-1xl lg:text-1xl tracking-tight leading-tight">
+          <span class="gradient-text-primary">Akbar Baruni Einstein & Ahmad Syarifuddin Triansyah</span>
+        </h1>
+
+        <!-- Subjudul -->
+        <p class="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+          Dashboard statistik deskriptif interaktif untuk eksplorasi tren, dinamika pasar, disparitas segmen industri vs edukasi, serta pengukuran tendensi sentral dan dispersi matematis.
+        </p>
+
+        <!-- Database Quick Spotlight Bar -->
+        <div class="pt-2">
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Klik untuk Sorot Database (Cross-Highlight):</p>
+          <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+            <button data-highlight-pill="PostgreSQL" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-indigo-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#6366F1]"></span> PostgreSQL
+            </button>
+            <button data-highlight-pill="MySQL" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-cyan-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#06B6D4]"></span> MySQL
+            </button>
+            <button data-highlight-pill="Microsoft SQL Server" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-rose-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#F43F5E]"></span> MS SQL Server
+            </button>
+            <button data-highlight-pill="MariaDB" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-amber-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span> MariaDB
+            </button>
+            <button data-highlight-pill="Oracle" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-purple-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#A855F7]"></span> Oracle
+            </button>
+            <button data-highlight-pill="SQLite" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 hover:border-emerald-500 flex items-center gap-1.5 transition-all">
+              <span class="w-2 h-2 rounded-full bg-[#10B981]"></span> SQLite
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Box & CTA -->
+      <div class="flex-shrink-0 flex flex-col gap-3 w-full sm:w-auto">
+        <a href="#sectionKPI" class="px-6 py-3 rounded-2xl font-bold text-sm bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2 hover-lift transition-all">
+          <span>Eksplorasi Statistik</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+          </svg>
+        </a>
+        <a href="#sectionStatistik" class="px-6 py-3 rounded-2xl font-bold text-sm bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center gap-2 transition-all">
+          <span>Lihat Tabel Perhitungan Lengkap</span>
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- 2. BARIS KPI (4 KARTU METRIK UTAMA DENGAN SPARKLINE) -->
+    <section id="sectionKPI" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+          <span>Ringkasan Metrik Kunci</span>
+          <span class="text-xs font-normal text-slate-400">(Tahun 2025 & Tren 3 Periode)</span>
+        </h2>
+        <span class="text-xs text-slate-400 font-mono">Segmen Aktif: <b class="text-indigo-400" id="currentSegBadge">Pekerja</b></span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- KPI 1: Database Terpopuler -->
+        <div class="glass-card rounded-2xl p-5 hover-lift relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Database Terpopuler 2025</span>
+              <h3 class="text-xl font-bold text-white flex items-center gap-1.5" id="kpi1Title">
+                PostgreSQL
+              </h3>
+            </div>
+            <span class="p-2.5 rounded-xl bg-amber-500/15 text-amber-400 text-xl border border-amber-500/30">👑</span>
+          </div>
+          <div class="mt-4 flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-extrabold font-mono-num text-white tracking-tight" id="kpi1Val">58,2%</span>
+              <p class="text-xs text-slate-400 mt-1" id="kpi1Sub">Peringkat #1 (Pekerja 2025)</p>
+            </div>
+            <div id="kpi1Spark" class="w-20 h-8 flex-shrink-0"></div>
+          </div>
+        </div>
+
+        <!-- KPI 2: Pertumbuhan Tertinggi 23->25 -->
+        <div class="glass-card rounded-2xl p-5 hover-lift relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Pertumbuhan Tertinggi</span>
+              <h3 class="text-xl font-bold text-white flex items-center gap-1.5" id="kpi2Title">
+                PostgreSQL
+              </h3>
+            </div>
+            <span class="p-2.5 rounded-xl bg-emerald-500/15 text-emerald-400 text-xl border border-emerald-500/30">🚀</span>
+          </div>
+          <div class="mt-4 flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-extrabold font-mono-num text-emerald-400 tracking-tight" id="kpi2Val">+8,2 pp</span>
+              <p class="text-xs text-slate-400 mt-1" id="kpi2Sub">50,0% → 58,2% (2023–2025)</p>
+            </div>
+            <div id="kpi2Spark" class="w-20 h-8 flex-shrink-0"></div>
+          </div>
+        </div>
+
+        <!-- KPI 3: Database Paling Stabil (SD Terkecil) -->
+        <div class="glass-card rounded-2xl p-5 hover-lift relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Paling Stabil (Min Volatilitas)</span>
+              <h3 class="text-xl font-bold text-white flex items-center gap-1.5" id="kpi3Title">
+                MySQL
+              </h3>
+            </div>
+            <span class="p-2.5 rounded-xl bg-cyan-500/15 text-cyan-400 text-xl border border-cyan-500/30">🎯</span>
+          </div>
+          <div class="mt-4 flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-extrabold font-mono-num text-cyan-400 tracking-tight" id="kpi3Val">±0,12 pp</span>
+              <p class="text-xs text-slate-400 mt-1" id="kpi3Sub">Simpangan Baku terkecil</p>
+            </div>
+            <div id="kpi3Spark" class="w-20 h-8 flex-shrink-0"></div>
+          </div>
+        </div>
+
+        <!-- KPI 4: Rata-rata Seluruh Database 2025 -->
+        <div class="glass-card rounded-2xl p-5 hover-lift relative overflow-hidden flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Rata-rata 2025</span>
+              <h3 class="text-xl font-bold text-white flex items-center gap-1.5" id="kpi4Title">
+                Rata-rata Keseluruhan
+              </h3>
+            </div>
+            <span class="p-2.5 rounded-xl bg-indigo-500/15 text-indigo-400 text-xl border border-indigo-500/30">📊</span>
+          </div>
+          <div class="mt-4 flex items-end justify-between">
+            <div>
+              <span class="text-3xl font-extrabold font-mono-num text-indigo-300 tracking-tight" id="kpi4Val">32,9%</span>
+              <p class="text-xs text-slate-400 mt-1" id="kpi4Sub">Mean dari 6 database tahun 2025</p>
+            </div>
+            <div id="kpi4Spark" class="w-20 h-8 flex-shrink-0"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. TREN PENGGUNAAN (GRID 8 + 4 KOLOM) -->
+    <section id="sectionTren" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-extrabold text-white">Tren Penggunaan 2023–2025</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Lintasan pertumbuhan tahunan 6 database relasional utama</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 8 Kolom: Line Chart Multi-Seri -->
+        <div class="lg:col-span-8 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-base text-slate-100 flex items-center gap-2">
+                <span>Kurva Trajektori Pertumbuhan</span>
+                <span class="text-xs font-normal text-slate-400">(2023 → 2024 → 2025)</span>
+              </h3>
+              <p class="text-xs text-slate-400">Titik data persentase adopsi pengguna per tahun</p>
+            </div>
+            <button data-download-target="chartTrendLine" data-download-name="tren-garis-database" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all" title="Unduh Chart PNG">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>Unduh PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[340px]">
+            <canvas id="chartTrendLine"></canvas>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>*Klik pada elemen legenda untuk menyembunyikan/menampilkan seri</span>
+            <span class="text-indigo-400 font-mono">Nilai dalam Persen (%)</span>
+          </div>
+        </div>
+
+        <!-- 4 Kolom: Kartu Dinamika Pertumbuhan 23->24 & 24->25 -->
+        <div class="lg:col-span-4 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="mb-3">
+            <h3 class="font-bold text-base text-slate-100">Dinamika Pertumbuhan</h3>
+            <p class="text-xs text-slate-400">Perubahan tahunan (Stabil bila |Δ| &lt; 1,0 pp)</p>
+          </div>
+          
+          <div class="space-y-2.5 overflow-y-auto max-h-[350px] pr-1" id="growthListContainer">
+            <!-- Diisi otomatis oleh app.js -->
+          </div>
+
+          <p class="text-[11px] text-slate-500 mt-3 pt-2 border-t border-slate-800/80 text-center">
+            Klik kartu di atas untuk menyorot database
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. PERBANDINGAN ANTAR DATABASE (GRID 6 + 6 KOLOM) -->
+    <section id="sectionPerbandingan" class="space-y-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-white">Perbandingan Antar Database</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Komparasi komprehensif distribusi data tahunan dan ranking tahun berjalan</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 6 Kolom: Grouped Bar Chart -->
+        <div class="lg:col-span-6 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Grouped Bar: 6 Database × 3 Tahun</h3>
+              <p class="text-xs text-slate-400">Perbandingan pergerakan nilai per database</p>
+            </div>
+            <button data-download-target="chartGroupedBar" data-download-name="grouped-bar-database" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[320px]">
+            <canvas id="chartGroupedBar"></canvas>
+          </div>
+        </div>
+
+        <!-- 6 Kolom: Horizontal Bar Chart Ranking Tahun Terpilih -->
+        <div class="lg:col-span-6 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Peringkat Popularitas (<span class="current-year-label text-indigo-400">2025</span>)</h3>
+              <p class="text-xs text-slate-400">Diurutkan descending dengan label nilai di ujung bar</p>
+            </div>
+            <button data-download-target="chartHorizontalBar" data-download-name="horizontal-bar-ranking" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[320px]">
+            <canvas id="chartHorizontalBar"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. PANGSA RELATIF (GRID 5 + 7 KOLOM) -->
+    <section id="sectionPangsa" class="space-y-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-white">Analisis Pangsa Relatif (Relative Market Share)</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Proporsi kontribusi database terhadap total 100% penggunaan 6 database terpilih</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 5 Kolom: Donut Chart dengan Center Text -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Proporsi Pangsa (<span class="current-year-label text-indigo-400">2025</span>)</h3>
+              <p class="text-xs text-slate-400">Komposisi pangsa relatif total 100%</p>
+            </div>
+            <button data-download-target="chartDonutShare" data-download-name="donut-share-database" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[310px] flex items-center justify-center">
+            <canvas id="chartDonutShare"></canvas>
+          </div>
+          <p class="text-[11px] text-slate-400 text-center mt-2">
+            Rumus: Nilai DB / &Sigma; Keenam Database pada tahun bersangkutan.
+          </p>
+        </div>
+
+        <!-- 7 Kolom: 100% Stacked Bar Chart -->
+        <div class="lg:col-span-7 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Pergeseran Komposisi Pangsa (100% Stacked)</h3>
+              <p class="text-xs text-slate-400">Dinamika perubahan kue pasar dari tahun 2023 hingga 2025</p>
+            </div>
+            <button data-download-target="chartStackedBar" data-download-name="stacked-bar-share" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[310px]">
+            <canvas id="chartStackedBar"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. ANALISIS PERINGKAT / BUMP CHART (GRID 7 + 5 KOLOM) -->
+    <section id="sectionPeringkat" class="space-y-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-white">Analisis Dinamika Peringkat (Bump Chart)</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Visualisasi perpindahan hierarki posisi popularitas database dari waktu ke waktu</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 7 Kolom: SVG Bump Chart -->
+        <div class="lg:col-span-7 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Bump Chart: Pergeseran Posisi (#1 s.d. #6)</h3>
+              <p class="text-xs text-slate-400">Sumbu Y terbalik: posisi #1 di atas, #6 di bawah</p>
+            </div>
+            <button data-download-target="bumpChartContainer" data-download-name="bump-chart-rank" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div id="bumpChartContainer" class="w-full flex items-center justify-center min-h-[320px]">
+            <!-- Rendered by SVG in charts.js -->
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2 text-center">
+            Garis kurva menghubungkan posisi database antar tahun. Klik jalur garis untuk menyorot.
+          </p>
+        </div>
+
+        <!-- 5 Kolom: Tabel Pergerakan Peringkat -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="mb-3">
+            <h3 class="font-bold text-base text-slate-100">Tabel Perubahan Peringkat</h3>
+            <p class="text-xs text-slate-400">Riwayat posisi per tahun & status pergerakan (&Delta;)</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-slate-700/80 text-slate-400 text-xs">
+                  <th class="py-2.5 px-3">Database</th>
+                  <th class="py-2.5 px-2 text-center font-mono">2023</th>
+                  <th class="py-2.5 px-2 text-center font-mono">2024</th>
+                  <th class="py-2.5 px-2 text-center font-mono">2025</th>
+                  <th class="py-2.5 px-3 text-right">Dinamika</th>
+                </tr>
+              </thead>
+              <tbody id="rankingsTableBody">
+                <!-- Diisi otomatis oleh app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Keterangan: ▲ Naik, ▼ Turun, ● Tetap</span>
+            <span class="text-indigo-400">Sorted by Rank 2025</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. PEKERJA VS PELAJAR (RADAR, DIVERGING & REGRESI LINEAR) -->
+    <section id="sectionPerbandinganSegmen" class="space-y-4 p-6 rounded-3xl bg-slate-900/40 border border-slate-800 transition-all duration-300">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/15 text-indigo-400 mb-1 border border-indigo-500/30">
+            <span>🔬 Komparasi Dua Segmen</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white">Pekerja Profesional vs Pelajar</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Analisis kesenjangan ekosistem industri dan edukasi (<span class="current-year-label text-indigo-400">2025</span>)</p>
+        </div>
+        <div id="scatterRegBadge" class="text-xs px-3 py-1.5 rounded-xl bg-slate-800/90 text-slate-300 font-mono border border-slate-700 self-start sm:self-auto">
+          Korelasi Pearson <b>r = 0,833</b> &bull; R² = <b>0,694</b>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Kolom 1: Radar Chart 6 Dimensi -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-bold text-sm sm:text-base text-slate-100">Radar Chart Dimensi DB</h3>
+              <p class="text-xs text-slate-400">Bentuk poligon adopsi Pekerja vs Pelajar</p>
+            </div>
+            <button data-download-target="chartRadarCompare" data-download-name="radar-pekerja-pelajar" class="chart-btn-action px-2 py-1 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300">
+              PNG
+            </button>
+          </div>
+          <div class="relative w-full h-[280px]">
+            <canvas id="chartRadarCompare"></canvas>
+          </div>
+        </div>
+
+        <!-- Kolom 2: Diverging / Butterfly Bar Chart (Selisih Pekerja - Pelajar) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-bold text-sm sm:text-base text-slate-100">Diverging Bar: Selisih Segmen</h3>
+              <p class="text-xs text-slate-400">&Delta; Persentase (Pekerja &minus; Pelajar)</p>
+            </div>
+            <button data-download-target="chartDivergingBar" data-download-name="diverging-selisih-segmen" class="chart-btn-action px-2 py-1 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300">
+              PNG
+            </button>
+          </div>
+          <div class="relative w-full h-[280px]">
+            <canvas id="chartDivergingBar"></canvas>
+          </div>
+        </div>
+
+        <!-- Kolom 3: Scatter Plot & Garis Regresi Linear Sederhana -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-bold text-sm sm:text-base text-slate-100">Regresi Linear & Korelasi</h3>
+              <p class="text-xs text-slate-400">X: Pekerja (%) vs Y: Pelajar (%)</p>
+            </div>
+            <button data-download-target="chartScatterRegression" data-download-name="scatter-regresi-segmen" class="chart-btn-action px-2 py-1 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300">
+              PNG
+            </button>
+          </div>
+          <div class="relative w-full h-[280px]">
+            <canvas id="chartScatterRegression"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 8. HEATMAP MATRIKS (DATABASE X TAHUN X SEGMEN) -->
+    <section id="sectionHeatmap" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-extrabold text-white">Matriks Intensitas Penetrasi (Heatmap)</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Tampilan matriks penuh 6 Database × 6 Kondisi Pengamatan (Tahun & Segmen)</p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6">
+        <div id="heatmapContainer">
+          <!-- Rendered by HTML/CSS Grid in charts.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. STATISTIK DESKRIPTIF LENGKAP (BAGIAN UTAMA TUGAS STATISTIKA) -->
+    <section id="sectionStatistik" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+        <div>
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 mb-1 border border-indigo-500/30">
+            <span>📐 Bagian Utama Tugas Statistika</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Tabel Statistik Deskriptif</h2>
+          <p class="text-xs sm:text-sm text-slate-400">Pengukuran tendensi sentral, dispersi, dan laju pertumbuhan per database</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Toggle Sampel vs Populasi -->
+          <button id="toggleVarianceType" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 border border-slate-700 hover:border-indigo-500 text-slate-200 transition-all font-mono">
+            Mode: Sampel (n−1)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabel Interaktif Sortable -->
+      <div class="glass-card rounded-2xl p-4 sm:p-6 overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs md:text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-700/80 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <th class="py-3 px-3.5 text-left sortable" data-sort="database">Database</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="mean" title="Rata-rata 3 Tahun">Mean</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="median" title="Nilai Tengah">Median</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="mode" title="Nilai Paling Sering Muncul">Modus</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="min" title="Nilai Terendah">Min</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="max" title="Nilai Tertinggi">Max</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="range" title="Max - Min">Rentang</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="variance" title="Varians (s² atau σ²)">Varians</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="stdDev" title="Simpangan Baku (s atau σ)">SD (&sigma;/s)</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="cv" title="Koefisien Variasi = SD / Mean * 100%">CV (%)</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="deltaAbs" title="Perubahan Poin Persentase 2023 ke 2025">&Delta; Abs (pp)</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="deltaRel" title="Persentase Pertumbuhan Relatif">&Delta; Rel (%)</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="cagr" title="Compound Annual Growth Rate">CAGR</th>
+                <th class="py-3 px-2 text-right sortable" data-sort="avgAnnualGrowth" title="Rata-rata Pertumbuhan per Tahun">Rata² Thn</th>
+              </tr>
+            </thead>
+            <tbody id="statsTableBody">
+              <!-- Diisi otomatis oleh app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Interpretasi Otomatis Tabel Statistik -->
+        <div id="statsTableInterpretation" class="mt-4 pt-3 border-t border-slate-800"></div>
+      </div>
+
+      <!-- VISUALISASI PENDUKUNG STATISTIK (BOX PLOT & ERROR-BAR) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Box-and-Whisker Plot Distribusi -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Box-and-Whisker Plot Antar Database</h3>
+              <p class="text-xs text-slate-400">Sebaran nilai Min, Q1, Median (Q2), Q3, Max per tahun</p>
+            </div>
+            <button data-download-target="boxPlotContainer" data-download-name="box-plot-distribusi" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div id="boxPlotContainer" class="w-full min-h-[280px]">
+            <!-- Rendered by SVG in charts.js -->
+          </div>
+        </div>
+
+        <!-- Error-Bar Chart (Mean ± SD) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="font-bold text-base text-slate-100">Bar Chart dengan Simpangan Baku (Error-Bar)</h3>
+              <p class="text-xs text-slate-400">Rata-rata 3 tahun (Mean) dengan interval whisker &plusmn; 1 SD</p>
+            </div>
+            <button data-download-target="chartErrorBar" data-download-name="error-bar-mean-sd" class="chart-btn-action px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center gap-1.5 transition-all">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span>PNG</span>
+            </button>
+          </div>
+          <div class="relative w-full h-[280px]">
+            <canvas id="chartErrorBar"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Panel Statistik Gabungan Antar Database per Tahun -->
+      <div class="glass-card rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-bold text-lg text-white">Statistik Gabungan Antar Database (Per Tahun)</h3>
+            <p class="text-xs sm:text-sm text-slate-400">Deskriptor agregat populasi 6 database: tendensi sentral, dispersi kuartil, dan koefisien kemiringan (skewness)</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="aggregateStatsContainer">
+          <!-- Diisi otomatis oleh app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. INSIGHT & TEMUAN OTOMATIS -->
+    <section id="sectionInsight" class="space-y-4">
+      <div>
+        <h2 class="text-xl font-extrabold text-white">Insight Analitis & Temuan Kunci</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Ringkasan temuan penting yang dihasilkan otomatis dari kalkulasi data statistik</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="insightsContainer">
+        <!-- Diisi otomatis oleh app.js -->
+      </div>
+    </section>
+
+
+  </main>
+
+  <!-- 12. FOOTER -->
+  <footer class="mt-16 border-t border-slate-800/80 bg-slate-950/80 py-8 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-400">
+        Dashboard Tugas Statistika Deskriptif &bull; Analisis Komparasi Popularitas Database Relasional (2023–2025)
+      </p>
+      <p>
+        Dibuat menggunakan HTML5, Tailwind CSS, Vanilla JavaScript (ES Modules), dan Chart.js v4. Tanpa backend, tanpa framework berat.
+      </p>
+      <p class="text-[11px] text-slate-600 pt-2">
+        Disclaimer: Data disajikan untuk tujuan edukasi dan presentasi akademis.
+      </p>
+    </div>
+  </footer>
+
+  <!-- TOMBOL KEMBALI KE ATAS (BACK TO TOP) -->
+  <button id="btnBackToTop" class="fixed bottom-6 right-6 p-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-600/40 opacity-0 pointer-events-none transition-all duration-300 no-print z-50 hover-lift" title="Kembali ke atas">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+    </svg>
+  </button>
+
+  <!-- Script Aplikasi Utama (ES Module) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
